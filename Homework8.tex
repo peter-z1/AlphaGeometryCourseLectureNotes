@@ -1,0 +1,60 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\newtheorem{problem}{Problem}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{enumitem}
+\usepackage{hyperref}
+
+\newcommand{\parallelsum}{\mathbin{\!/\mkern-5mu/\!}}
+
+
+
+
+\title{Math1810c Homework 8}
+\author{Released October 31}
+\date{Due November 7}
+
+\begin{document}
+
+\maketitle
+
+\section{Instructions}
+
+For the homework, you must write your own solutions for the Mathematical Problems. For the coding problems, you will work in your teams, and should have a commit on your Github page for the tasks for each week. 
+
+\section{Mathematical Problems}
+
+\begin{problem}
+    Recall the proposition that we were proving from class on Wednesday.
+
+    \textbf{Prop (Plane Separation):} Let $l$ be any line, Then the set of points not lying on $l$ can be divided into two non-empty subsets $S_1$ and $S_2$ with the following properties:
+    \begin{enumerate}[label=(\alph*)]
+        \item Two points $A$, $B$ not on $l$ belong to the same set iff the segment $\overline{AB}$ does not intersect $l$.
+        \item Two points $A$, $B$ not on $l$ belong to opposite sets iff the segment $\overline{AB}$ intersects $l$. 
+    \end{enumerate}
+
+    We had define an relation $\sim$ by $A\sim B$ if $\overline{AB}\cap l=\emptyset$ and $A\not\sim B$ if $\overline{AB}\neq\emptyset$.
+
+    \begin{enumerate}
+        \item Assume that $A,B,C$ are collinear in this case prove that if $A\sim B$ and $B\sim C$, then $A\sim C$. This will complete the proof that $\sim$ is an equivalence relation. 
+
+        \item Show that there are only $2$ equivalence classes determined by $\sim$. That is show that if $A\not\sim B$ and $B\not\sim C$, then $A\sim C$. 
+    \end{enumerate}
+\end{problem}
+
+
+\newpage
+
+\section{Coding Goals}
+
+\begin{problem}
+        Consider the following problem from the \href{https://artofproblemsolving.com/wiki/index.php/2023_USAMO_Problems/Problem_1}{2023 USAMO} (note the solution is given in the link). Your system should be able to solve this problem with a rabbit. Use this as a test to manually add the rabbit using your construction file to see if it will solve this problem. 
+\end{problem}
+
+\begin{problem}
+    \href{https://artofproblemsolving.com/community/c6h3215547p29415873}{Here} is another problem that your system should be able to solve with the addition of a rabbit. 
+\end{problem}
+
+\end{document}

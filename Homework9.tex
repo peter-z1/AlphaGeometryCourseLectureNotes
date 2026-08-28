@@ -1,0 +1,59 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\newtheorem{problem}{Problem}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{hyperref}
+
+\newcommand{\parallelsum}{\mathbin{\!/\mkern-5mu/\!}}
+
+
+
+
+\title{Math1810c Homework 9}
+\author{Released November 7}
+\date{Due November 14}
+
+\begin{document}
+
+\maketitle
+
+\section{Instructions}
+
+For the homework, you must write your own solutions for the Mathematical Problems. For the coding problems, you will work in your teams, and should have a commit on your Github page for the tasks for each week. 
+
+\section{Mathematical Problems}
+
+\begin{problem}
+\begin{itemize}
+    \item[(a)] If $\alpha \cong \beta$ and $\beta \cong \gamma$, then $\alpha \cong \gamma$. $\alpha\cong \alpha$.
+    \item[(b)] If $\beta \cong \alpha$ and $\beta \cong \gamma$, then $\alpha \cong \gamma$. $\alpha\cong \alpha$.
+\end{itemize}
+Show that (a) does not necessarily define an equivalence relation by providing with a counter example. Show that (b) defines an equivalence relation.
+\end{problem}
+
+\newpage
+
+\section{Coding Goals}
+
+\begin{problem}
+    The goal of this week will be to create some training data for the language model.  \href{https://ai.google.dev/gemma/docs/tune}{Click here} for a general overview form google about Gemma. The particular thing that we are interested in is the training data. In particular, the input text should be of the form
+    \begin{itemize}
+        \item \verb|"input_text" : "Set_Up: Predicates in set up; Goal: Predicates for the goal"|
+        \item For example \verb|"input_text" : "Set_Up: cong A B A C; Goal: eqangle C B A B C A"|
+    \end{itemize}
+    Then the output text should be the ``Rabbit'' that is it will be a function in \verb|Construction.py| that you called which should help get from the set up to the goal. For example the output text might look like:
+    \begin{itemize}
+        \item \verb|"output_text" : "angle_bisector(C, A, B)"|
+    \end{itemize}
+    In reality, the \verb|"angle_bisector(C, A, B)| will be the actually line of code that you call in construction (thus if you pass in the problem/etc. then you should also include that in this string). We discussed in class how to come up with these ``good'' problem/rabbit (input\_text/output\_text) pairs. 
+
+    \noindent Create a file called \verb|Data_Generation.py| this file will be used to generate the synthetic data to train the language model. In particular, you will want to test this on a smaller case before running it on say OSCAR to generate a large amount of data. In particular, for this file, you will randomly call constructions from your \verb|Construction.py| file, after doing this one construction, you will run ddar to see what you deduce from after applying this construction. When you run this, the goal is to see what predicates that you deduce whose proofs rely upon the construction that was applied, but the predicate of the thing that was deduced does not involve the newly constructed point. This will be the data that you should be gathering. After running ddar and picking out the good problem/rabbit pairs, you will then apply an additional construction and keep going for a set amount. You might also consider changing the probability of which constructions that you apply. 
+\end{problem}
+
+\begin{problem}
+    Once you get your \verb|Data_Generation.py| working on a small scale. Run it on OSCAR to get a large amount of data that you will use to train your LM. 
+\end{problem}
+
+\end{document}

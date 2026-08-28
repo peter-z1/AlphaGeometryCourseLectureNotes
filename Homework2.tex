@@ -1,0 +1,97 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\newtheorem{problem}{Problem}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+\usepackage{verbatim}
+
+\newcommand{\parallelsum}{\mathbin{\!/\mkern-5mu/\!}}
+
+
+
+
+\title{Math1810c Homework 2}
+\author{Released September 19}
+\date{Due September 26}
+
+\begin{document}
+
+\maketitle
+
+\section{Instructions}
+
+For the homework, you must write your own solutions for the Mathematical Problems. For the coding problems, you will work in your teams, and should have a commit on your Github page for the tasks for each week. 
+
+\section{Mathematical Problems}
+
+\begin{problem}
+    (Euclid Book 4, Proposition 4) Prove that if $\triangle ABC$ and $\triangle DEF$ are similar, then $AB/DE = BC/EF = AC/DF$.
+\end{problem}
+
+\begin{problem}
+Prove that the internal angle bisector of $\angle ABC$ and the external angle bisectors of $\angle BCA$ and $\angle CAB$ are concurrent. (It is called the excenter of $B$.)
+\end{problem}
+
+\begin{problem}
+Prove the following theorem in formal language. (You may use AR.) The line passes $D,E,F$ is called the Simson Line.
+
+[1] cyclic $A~B~C~P$;
+
+[2] perp $D~P~B~C$;
+
+[3] col $D~B~C$;
+
+[4] perp $E~P~A~C$;
+
+[5] col $E~A~C$;
+
+[6] perp $F~P~A~B$;
+
+[7] col $F~A~B$;
+
+col $D~E~F$?
+
+\end{problem}
+
+\begin{problem}
+    Read Book 2 of Euclid's Elements.
+\end{problem}
+\newpage
+
+\section{Coding Goals}
+
+\begin{problem}
+    The overall goal of the coding this week is to have a basic foundation for your AlphaGeometry system. Primarily, the system which you will build this week just has a dd component. You should think about and add rules to your dd, so that it can solve the following problems:
+    \begin{enumerate}
+        \item para A B C D; para B C D A; col A E C; col B E D; ? cong A E E C
+        \item midp M A C; para M N A B; col N C B; ? midp N C B
+    \end{enumerate}
+\end{problem}
+
+\begin{problem}
+    In class, we discussed the file \verb|Read_in_Geogebra_File.py| this file has been written for you and attached. You must store the \verb|.ggb| file in a folder called \verb|Geogebra Files|. The only function that you need from this file is called \verb|parse_picture| which takes in a string which is the name of the file. It returns a tuple of three dictionaries \verb|(points, lines, circles)|. The keys of the \verb|points| dictionary are the names of the points, and the corresponding values are a tuple of the $x$ and $y$ coordinate \verb|{`A': (x,y)}|. The keys of the \verb|lines| dictionary are the names of lines (these don't matter), but the value is a tuple of three numbers say \verb|{`L1': (a,b,c)}| where $a,b,c$ are the numbers which define the line $ax+by+c =0$ (you would just need to use this equation to draw a picture of this line in the \verb|Constructions.py| file). The keys of the \verb|circles| dictionary are just the names of the circles (again they don't matter), but the value is a tuple of three numbers say \verb|{`circle1': (cx,cy,r)}|, where $cx,cy,r$ are real numbers corresponding to the $x$-coordinate of the center, $y$-coordinate of the center, and $r$ the radius, so the circle has equation $(x-cx)^2+(y-cy)^2 = r^2$ (again you just need this equation to draw the circle in say \verb|Construction.py|). 
+\end{problem}
+
+\begin{problem}
+    Build the \verb|Problem.py| file, this file should compromise how you are storing the data of your problem such as the initial assumptions of your problem, and the goals of the problem. You can choose how you want to store this data. 
+\end{problem}
+
+\begin{problem}
+    Build the \verb|dd.py| file, this will be your deductive database which constitutes the rules that you will have to solve your geometry problems. You can pick which rules to implement and how you want to implement them given how you decide to store your data in \verb|Problem.py|, you should do try and pick rules that will at least solve the problems described in Problem 5. 
+\end{problem}
+
+\begin{problem}
+    Build the \verb|Constructions.py| file, this file will draw out the problem and the various constructions that might be done when solving it. You should have different functions for different constructions that might appear such as taking the midpoint, perpendicular, angle bisector, etc.
+\end{problem}
+
+\begin{problem}
+    Build the \verb|Read_in_Relations.py| file, this file should take have a function which takes in the name of a .txt file, and should parse the formalization of the problem where  each predicate is separated by a semi-colon, and a question mark appears before the goal of the problem. The function can return this information to you however you feel appropriate, but you will need to use it to create the corresponding relations for the problem. 
+\end{problem}
+
+
+\begin{problem}
+    Build the \verb|Solve.py| file. This will be the main file which your program will run, you will specify the geogebra \verb|.gbb| file and the formalization in the \verb|.txt| file, it should then run the functions from \verb|Read_in_Geogebra_File.py| and \verb|Read_in_Relations.py|. You should use the parsed data and have it create the corresponding Problem object as defined in your \verb|Problem.py| file, and you should reconstruct the picture in Python using the \verb|Construction.py| file. You should then run the problem through each of your rules in your \verb|dd.py|. 
+\end{problem}
+
+\end{document}

@@ -1,0 +1,87 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\newtheorem{problem}{Problem}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+
+\newcommand{\parallelsum}{\mathbin{\!/\mkern-5mu/\!}}
+
+
+
+
+\title{Math1810c Homework 7}
+\author{Released October 24}
+\date{Due October 31}
+
+\begin{document}
+
+\maketitle
+
+\section{Instructions}
+
+For the homework, you must write your own solutions for the Mathematical Problems. For the coding problems, you will work in your teams, and should have a commit on your Github page for the tasks for each week. 
+
+\section{Mathematical Problems}
+
+\begin{problem}
+Assume (I1),(I2), and (I3) from the last class.
+\begin{enumerate}
+    \item Define a triangle.
+    \item Assume further that there are at least four lines. Find the minimum and maximum numbers of triangles formed by $4$ lines.
+    \item Again, assume that there are at least four lines. Is the minimum or maximum from the previous question always attainable? If not, find an example.
+\end{enumerate}
+\end{problem}
+
+\newpage
+
+\section{Coding Goals}
+
+\textbf{Note 1:} When constructing points below, you might want to think about how you ``name the points'' since you don't want to use letters that you gave your program, but you might want to do it systematically, I'd suggest using letters and numbers like \verb|P1|, and then you just have a counter for the different numbers (you could also have separate counters for different kinds of the letters say \verb|O1| for a center of some circle \verb|M1| for some midpoint etc...)
+
+\noindent\textbf{Note 2:} The below is a general outline of what construction should look like, be sure that you do all appropriate checks, and that you always create the correct relation objects and the corresponding updates in AR. 
+
+\begin{problem}
+We will start to build some artificial data to train the model starting next week. Thus, in order to get that you need your \verb|construction.py| file to have different constructions. There is a list of constructions in the extended table 1 in the alphageometry paper, but here are several of the constructions that you should have, but feel free to have more if you would like (The way you implement this is up to you, but there are general outlines below; although you may want to do things like make sure that the point you are constructing isn't already there):
+
+\begin{itemize}
+    \item \verb|X = angle bisector(A,B,C)|, so you might create a function which takes in three points $A,B,C$, and it will construct a third point $X$ which bisects angle $A,B,C$. Now the point $X$ on the angle bisector might seem arbitrary, but it would be more useful if this point had some relation to the problem, so I recommend that the point $X$ is on the line $AC$ (that is there is a triangle $ABC$ and $X$ is the intesection of the angle bisector of $ABC$ and the $AC$). However this construction of picking $X$ as the intersection only works if $ABC$ are not collinear (which you can check using the diagram). 
+
+    When you do this construction, you should namely create the point object $X$ with its coordinates and everything in the picture, and then you should create the corresponding relations this should be a \verb|col A C X| and an \verb|eqangle A B X X B C|. When adding these relations, you may need to update your AR as the matrix will now grow as well and you should have new columns involving $X$
+
+    \item \verb|X = circle(A,B,C)|, this will construct $X$ to be the point that is the circumcenter of triangle $ABC$. In this case, you create the point $X$ and draw the circumcircle of the triangle. If you implemented a \verb|circle X A B C| predicate you can create that, or you can just create a \verb|cong X A X B|, \verb|cong X A X C| (these two should be enough), and update AR. 
+
+    \item \verb|X = foot(A,B,C)|, this will construct $X$ as the foot of the perpendicular from $A$ to the segment $BC$. Again, here you need to check that $ABC$ are not collinear. Then you draw the line from $A$ to $BC$ intersecting at point $X$ so that $AX$ is perpendicular to $BC$. You should create a \verb|perp A X B C| object, and update AR. 
+
+    \item \verb|I = incenter(A,B,C)|, this will let $I$ be the incenter of triangle $ABC$, you need to check that $ABC$ are not collinear. Then you construct $I$, draw the three angle bisectors (and perhaps also the incircle), and create say \verb|eqangle A B I I B C|,\\ \verb|eqangle B C I I C A|, and \verb|eqangle C A I I A C| (if you wanted to, you it might be overkill, but you could also take the intersection with the opposite sides of the triangles, so also construct the corresponding collinear relations), and then update AR.
+
+    \item \verb|X, Y, Z, I = incenter2(A,B,C)|, this creates the incenter as above, but also draws the incircle, and has the points \verb|X, Y, Z| be the points of tangency of the incircle and the line segments, so it does everything \verb|incircle| does, but also creates points where \verb|perp I X B C|, \verb|perp I Y A C|, and \verb|perp I Z A B|. 
+
+    \item \verb|J = excenter(A,B,C)|, this will let $J$ be the excenter of the triangle $ABC$ with respect to the vertex $A$, so it will draw the internal angle bisector of $BAC$, and the external angle bisectors of $ABC$ and $ACB$ creating the corresponding \verb|eqangle| objects and the point $J$. 
+
+    \item \verb|X, Y, Z, J= excenter2(A,B,C)|, this will let $J$ be the excenter of the circle, but also draw the excircle, the points $X, Y, Z$ and create the tangency objects for these points. 
+
+    \item \verb|G, X, Y, Z = centroid(A,B,C)|, this will construct $G$ as the centroid of the triangle $ABC$, you should check that $ABC$ aren't collinear. Then you let $G$ be the centroid, and let $X,Y,Z$ be the corresponding midpoints of the segments $BC$, $AC$, and $AB$. Create the corresponding collinear and midpoint objects and update AR. 
+
+    \item \verb|X = tangent(O,A)|, this will construct $X$ such that $OA$ is perpendicular to $AX$. Thus, you will create a \verb|perp OA AX| term. Although, you might not know what else lies on that line (I don't know if there is a clever way to choose a different point, but maybe you'd get something later). 
+
+    \item \verb|X = midpoint(A,B)|, this will construct $X$ such that $X$ is the midpoint of $AB$, so you will just draw this line and label the point, and get the relation \verb|midp X A B|.
+
+    \item \verb|X = mirror(A,B)|, this will reflect $A$ abound $B$, so it creats the point $X$ such that $B$ is the midpoint of $AB$, so you draw the line and point, and get the relation \verb|midp B A X|. 
+
+    \item \verb|H = orthocenter(A,B,C)|, this will construct $H$ as the orthocenter of triangle $ABC$, you should make sure that $ABC$ aren't collinear. Then create the corresponding \verb|perp H A B C|, etc. objects and update AR.
+
+    \item \verb|H, X, Y, Z = orthocenter2(A,B,C)|, this will construct $H$ as the orthocenter, and also let $X,Y,Z$ be the corresponding intersection with the opposite sides of the triangle. Thus, this will do everything that \verb|orthocenter| does, but also creates these new points and the corresponding colinear objects. 
+
+    \item \verb|X, Y = reflect(A,B,C)|, this will reflect the point $A$ about the line $BC$. The constructed point will be $X$, and $Y$ will be the point on the line $BC$ which is the intersection. Thus, you will create a \verb|midp Y A X|, \verb|col Y B C|, \verb|perp A X B C|.
+
+    \item \verb|X = on_dia(A,B)|, this creates a point $X$ such that \verb|perp A X X B|. 
+
+    \item \verb|X, Y = tangent(A,O,B)|, this takes the point $A$ and looks at the circle with center $O$ and point $B$ on the circle, and let's $X$ and $Y$ be the two tangents from $A$ to the circle. Thus, this will have \verb|cong O B O X|, \verb|cong O B O Y|, \verb|perp A X O X|, and \verb|perp A Y O Y|. 
+
+    \item \verb|X = intersect_lines(A,B,C,D)|, this will create $X$ as the intersection of lines $AB$ and $CD$, so it will create the two corresponding collinear objects.     
+\end{itemize}
+
+\end{problem}
+
+\end{document}

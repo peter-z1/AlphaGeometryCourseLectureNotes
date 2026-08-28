@@ -1,0 +1,81 @@
+\documentclass{article}
+\usepackage{graphicx} % Required for inserting images
+\newtheorem{problem}{Problem}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{amsmath}
+
+\newcommand{\parallelsum}{\mathbin{\!/\mkern-5mu/\!}}
+
+
+
+
+\title{Math1810c Homework 1}
+\author{Released September 12}
+\date{Due September 19}
+
+\begin{document}
+
+\maketitle
+
+\section{Instructions}
+
+For the homework, you must write your own solutions for the Mathematical Problems. For the coding problems, you will work in your teams, and should have a commit on your Github page for the tasks for each week. 
+
+\section{Mathematical Problems}
+
+\begin{problem}
+Prove that the following statements are equivalent.
+\begin{itemize}
+  \item $\square ABCD$ is a parallelogram.
+  \item $\square ABCD$ is a quadrangle and $AB = CD$ and $AD = BC$.
+  \item $\square ABCD$ is a quadrangle and $\angle_0 BAD = \angle_0 BCD$ and $\angle_0 ABC = \angle_0 ADC$.
+  \item $\square ABCD$ is a quadrangle and $AC$ bisects $BD$ and $BD$ bisects $AC$.
+  \item $\square ABCD$ is a quadrangle and $AB \parallelsum CD$ and $AB=CD$. 
+\end{itemize}
+
+\end{problem}
+
+\begin{problem}
+     Prove that if $I$ is the incenter of the triangle $\Delta ABC$, then $AI$ is the internal angle bisector of $\angle BAC$.
+\end{problem}
+
+\begin{problem}
+    Formalize the following statement using the predicates we learned from class:
+\begin{center}
+The three medians of a triangle are concurrent.    
+\end{center}
+    Prove the statement using formal language.
+\end{problem}
+
+\begin{problem} (extra credit)
+Formalize the incenter using the predicates we learned.
+\end{problem}
+
+\newpage
+
+\section{Coding Goals}
+
+\begin{problem}
+    Set up the Github that your group will use, and set up a form of communication for your group.  
+\end{problem} 
+
+\begin{problem}
+    Make a file called relations.py which will contain each of the predicates that have been created in the ``List of Predicates'' spreadsheet on the course website. There should be some class of ``Points'' which represent the points that are used in the problem. The Point should have the data of
+    \begin{itemize}
+        \item Name of the point
+        \item The $x$-coordinate of the point
+        \item The $y$-coordinate of the point
+    \end{itemize}
+    Later on we will read the data of the $x$ and $y$ coordinates off of the diagram. 
+
+    Now for each of the predicates in the ``List of Predicates'' spreadsheet, you should make some class of objects such as ``perp'', ``cong'', etc. When making this code, you might want to consider how you want to store the symmetries of these objects. For example, if we consider ``cong AB CD'' you could store it as a list of $2$-tuples of points, say $((A,B),(C,D))$, but in doing this there are lots of symmetries. For example, to store this, we would still have to store $((C,D), (A,B))$, $((B,A),(C,D))$,... Thus, there are lots of equivalent forms. Thus, storing these in sets would help relieve these symmetries. 
+
+    Furthermore, you should consider the hierarchy of predicates, and how to implement this. For example, we discussed the circumcenter in class. If we say ``circle O ABC'' to say that O is the circumcenter of triangle ABC, then we have that this formalization is equivalent to ``cong OA OB'' and ``cong OB OC''. Thus, when creating a ``circle O ABC'' this should also include the data of creating the relevant ``cong'' statements. 
+\end{problem}
+
+ \begin{problem}
+        Now that you have a class for some of the relations, make a file called relations\_test.py where you will test if your code works. In particular, if you consider your formalization of problem 3, you should create the corresponding point objects, and predicates. For this problem, you can just draw a picture on your own and manually assign the $x$ and $y$ coordinates of the point (as we shall be writing the code that reads in the picture later in the course). 
+\end{problem}
+
+\end{document}
