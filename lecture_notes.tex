@@ -200,6 +200,30 @@
     code.
 \end{abstract}
 \maketitle
+
+\section*{Acknowledgments}
+\noindent
+\begin{minipage}[c]{0.19\textwidth}
+    \centering
+    \includegraphics[width=0.95in]{figures/nsf-official-logo.png}
+\end{minipage}\hfill
+\begin{minipage}[c]{0.77\textwidth}
+    \small
+    These lecture notes grew out of a Fall 2025 special topics course at Brown
+    University offered with support from the project
+    \emph{AIMing: Building Automated Reasoning System for Hyperbolic Geometry
+    and Beyond}.
+
+    \smallskip
+    This material is based upon work supported by the U.S. National Science
+    Foundation under award No.~2522850.
+
+    \smallskip
+    Any opinions, findings and conclusions or recommendations expressed in this
+    material are those of the author(s) and do not necessarily reflect the views
+    of the U.S. National Science Foundation.
+\end{minipage}
+
 \tableofcontents
 
 \newpage
@@ -3860,21 +3884,8 @@ simply gets expressed in terms of what is already known. Finding
 \emph{every} new fact is then just comparing every pair of expressions and
 checking whether their difference collapses to a constant.
 
-\begin{lecturebox}{Remark: where is the Gaussian elimination?}
-AR does not first build one large matrix and then run Gaussian elimination
-from scratch. Instead, the table is kept in a reduced form as the proof
-develops. Each new geometric fact contributes one linear equation, and
-\verb|add_expr| immediately performs the corresponding pivot: it solves for
-one variable in terms of the remaining free variables and substitutes that
-expression throughout \verb|v2e|. This is why AR is fast. Equality
-consequences are propagated by algebraic normalization, rather than by many
-separate theorem applications. The separate matrix stored by \verb|register|
-is mainly for proof traceback: later, a small linear program asks which input
-facts were responsible for a derived equality.
-\end{lecturebox}
-
 \subsubsection{Worked example: bisector and ex-bisector are perpendicular}
-\leavevmode\par\nobreak\smallskip
+
 \examplepart{The problem, in words}
 Let $ABC$ be a triangle. Let $D$ be its
 incenter and $E$ the excenter opposite $A$. The line $CD$ is then the
@@ -4009,117 +4020,44 @@ then on this very problem.
 \subsection{Optional: Linear Programming and the \emph{Why} Matrix}\label{sec: AR LP}
 
 \begin{lecturebox}{Optional deep dive}
-This subsection first introduces linear programming as a mathematical topic
-in its own right. Only after that do we return to AR and explain why a linear
-program appears in proof traceback.
+This subsection explains how AR produces a human-readable reason for a linear
+algebra consequence. It is useful for understanding proof output, but it can
+be skipped on a first pass through the implementation.
 \end{lecturebox}
 
-\examplepart{What is a linear program?}
-A \emph{linear program} is an optimization problem in which both the
-quantity being optimized and the constraints are linear. In one common
-form, we choose a vector \(x=(x_1,\ldots,x_n)\in \mathbb{R}^n\) and solve
-\[
-\begin{array}{ll}
-\text{minimize}   & c^\top x \\[2mm]
-\text{subject to} & Ax \leq b,\\
-                  & x\geq 0.
-\end{array}
-\]
-The vector \(c\) gives the linear objective function, the inequalities
-\(Ax\leq b\) describe the feasible region, and the condition \(x\geq0\)
-usually means that the variables represent amounts of something: bags,
-hours, weights, probabilities, or, later, weights assigned to proof facts.
+A linear program finds values $x_1,\ldots,x_n \geq 0$ satisfying a system of
+linear equations $Ax=b$ while minimizing a linear cost $c^\top x$. AR uses
+one to answer: \emph{can the fact I want be built by combining the facts I
+already have?}
 
-Geometrically, the feasible region is an intersection of half-spaces, hence
-a convex polygon in two variables, a convex polyhedron in three variables,
-and a convex polytope in higher dimensions (possibly unbounded). The key
-feature is that a linear objective has no hidden curvature. If an optimum
-exists, one can find an optimum at a vertex of the feasible region.
+\textbf{A farmer example.} A farmer has two fertilizer mixes:
+\begin{itemize}
+    \item Mix $P$: $2$ units nitrogen, $1$ unit phosphorus per bag.
+    \item Mix $Q$: $1$ unit nitrogen, $3$ units phosphorus per bag.
+\end{itemize}
+The field needs exactly $5$ units of nitrogen and $5$ of phosphorus. Writing
+$p,q\geq0$ for the number of bags used:
+$$2p+q=5, \qquad p+3q=5.$$
+Solving gives $p=2$, $q=1$: two bags of $P$, one of $Q$, three bags total. A
+third mix $R$ (only potassium and sulfur) would not help at all - it never
+touches nitrogen or phosphorus, so any solver minimizing total bags used
+simply sets its weight to $0$.
 
-\examplepart{Equality form}
-The version used by \verb|scipy.optimize.linprog| in \verb|ar.py| is closer
-to
-\[
-\begin{array}{ll}
-\text{minimize}   & c^\top x \\[2mm]
-\text{subject to} & A_{\mathrm{eq}}x=b_{\mathrm{eq}},\\
-                  & x\geq0.
-\end{array}
-\]
-This is called an \emph{equality-constrained} or \emph{standard-form}
-linear program. Inequalities can be converted into equalities by adding
-slack or surplus variables. For example, \(2p+q\geq5\) is equivalent to
-\[
-2p+q-s=5,\qquad s\geq0,
-\]
-where \(s\) records the amount by which the left-hand side exceeds the
-minimum requirement.
+This \emph{is} AR's traceback: facts (here, fertilizer mixes) get combined
+with non-negative weights to reproduce a target (here, a nutrient
+requirement); an irrelevant fact (here, $R$) automatically gets weight zero,
+since using it can only add bags, never help.
 
-\examplepart{A farmer example}
-A farmer can buy two fertilizer mixes:
-\[
-\begin{array}{c|cc|c}
-       & \text{nitrogen} & \text{phosphorus} & \text{cost} \\
-\hline
-P      & 2              & 1                 & 3 \\
-Q      & 1              & 3                 & 2
-\end{array}
-\]
-The field needs at least \(5\) units of nitrogen and at least \(5\) units of
-phosphorus. If \(p,q\geq0\) are the numbers of bags of \(P\) and \(Q\), the
-problem is
-\[
-\begin{array}{ll}
-\text{minimize}   & 3p+2q \\[1mm]
-\text{subject to} & 2p+q\geq5,\\
-                  & p+3q\geq5,\\
-                  & p,q\geq0.
-\end{array}
-\]
-The two nutrient constraints meet at
-\[
-2p+q=5,\qquad p+3q=5,
-\]
-which gives \(p=2\), \(q=1\). The cost is \(3\cdot2+2\cdot1=8\).
+\textbf{The one wrinkle for AR.} Bags of fertilizer can never be negative,
+but AR sometimes needs to \emph{subtract} a fact rather than add it - and
+\verb|scipy.optimize.linprog|'s default only allows $x\geq0$. The fix: split
+each fact's weight into two non-negative pieces, "use it forward" and "use
+it backward," with the true (signed) weight being their difference. This is
+why \verb|Table.register| appends \emph{two} columns per fact to a matrix
+\verb|self.A|, not one.
 
-Why is this optimal? The feasible region lies above both lines
-\(2p+q=5\) and \(p+3q=5\) in the first quadrant. Moving the objective line
-\(3p+2q=\text{constant}\) downward, the first feasible point it touches is
-the intersection \((2,1)\). Other vertices are more expensive: using only
-\(P\) requires \(p=5\), cost \(15\); using only \(Q\) requires \(q=5\), cost
-\(10\). Thus the best solution is two bags of \(P\) and one bag of \(Q\).
-
-A third mix \(R\) containing only potassium and sulfur would receive weight
-\(0\) in an optimal solution, because it helps none of the two constraints
-we care about while increasing the cost. This simple observation is the
-part that will matter for AR: a linear program can automatically ignore
-irrelevant ingredients.
-
-\examplepart{Returning to AR}
-In AR, the "ingredients" are not bags of fertilizer but previously known
-linear facts. The target is not a nutrient requirement but a new equality
-whose proof we want to explain. The question becomes:
-\[
-\text{Can the target equality be obtained as a linear combination of the
-already registered facts?}
-\]
-This question is exactly an equality-form linear program. The matrix
-\verb|self.A| stores the registered facts as columns. The vector
-\verb|b_eq| stores the target equality we want to reproduce. Solving
-\[
-A_{\mathrm{eq}}x=b_{\mathrm{eq}}, \qquad x\geq0
-\]
-tells AR which facts were actually needed.
-
-There is one technical wrinkle. In ordinary linear algebra one may combine
-equations with positive or negative coefficients, but \verb|linprog| uses
-non-negative variables. Therefore \verb|Table.register| stores two columns
-per fact: one for using the fact forward and one for using it backward. The
-signed coefficient is the difference between those two non-negative
-weights.
-
-\examplepart{Back to the bisector example}
-For the worked example above, the registered facts give the following matrix:
+\textbf{Back to the bisector example.} This is exactly
+the $6\times 6$ matrix from the worked example above, repeated here:
 \begin{lstlisting}
        fact1+  fact1-  fact2+  fact2-  fact3+  fact3-
 d(ac)  [ 1      -1      -1       1      1      -1   ]
@@ -4129,17 +4067,18 @@ pi     [ 0       0       1      -1      1      -1   ]
 d(ce)  [ 0       0       2      -2      0       0   ]
 d(ab)  [ 0       0       0       0      1      -1   ]
 \end{lstlisting}
-Asking \emph{why} \(d(CD)-d(CE)=\tfrac12\pi\) produces a target vector with
-\(+1\) on \verb|d(cd)|, \(-1\) on \verb|d(ce)|, and \(-\tfrac12\) on
-\verb|pi|. Solving the equality-form LP gives:
+Asking \emph{why} $d(CD) - d(CE) = \tfrac12\pi$ sets the target vector
+$b_{eq}$ to $+1$ for \verb|d(cd)|, $-1$ for \verb|d(ce)|, and
+$-\tfrac12$ for \verb|pi| (that last entry is the part of $d(CD)-d(CE)$ not
+already absorbed into \verb|v2e|, i.e. what the original facts still need to
+explain). Solving gives:
 \begin{lstlisting}
 x* = (0, 0.5, 0, 0.5, 0, 0)      objective = -1
 \end{lstlisting}
-Thus \emph{fact1} and \emph{fact2} are used, each in the backward direction
-with weight \(1/2\), while the distractor \emph{fact3} receives weight
-\(0\). This is the AR analogue of the farmer's irrelevant mix \(R\): it is
-available, but it is not needed to produce the target. The proof traceback
-therefore reports exactly \texttt{['fact1', 'fact2']}.
+\emph{fact1} and \emph{fact2} each used with weight $-\tfrac12$, exactly as
+in the farmer example; \emph{fact3} unused, weight $0$. This matches the
+test's own assertion that $d(CD), d(CE)$ differ by $\tfrac12\pi$, justified
+by \texttt{['fact1', 'fact2']} only.
 
 \subsection{A Closer Look at the Language Model}\label{sec: lm.py}
 
@@ -4149,59 +4088,30 @@ When both get stuck, the LM proposes one - a \emph{rabbit}
 work with a model as small as $150$M parameters: how its training data was
 generated, and how little it is actually asked to do at inference time.
 
-\textbf{How one can make the training data.} The original paper
-\cite{trinh2024solving} describes the central idea: avoid human-written
-proof demonstrations by manufacturing many synthetic geometry problems.
-For our purposes, the important point is not the exact engineering setup
-used by DeepMind, but the mathematical recipe it suggests. The whole
-pipeline can be read as a way of turning solved random diagrams into
-supervised examples for auxiliary-point prediction.
-
-The recipe is roughly this:
+\textbf{How the training data was made.} DeepMind never released this
+data, or the script that generated it - only the trained checkpoint and the
+inference code in front of you. What follows is reconstructed from the
+original paper \cite{trinh2024solving}, and it reuses exactly the engine
+built up over the last two sections:
 \begin{enumerate}
-    \item \textbf{Generate a random construction.} Start from a small set of
-          free points, then repeatedly apply construction rules such as
-          ``take an intersection,'' ``draw a midpoint,'' ``construct an
-          incenter,'' or ``put a point on a line.'' In code, these are the
-          same kinds of actions listed in \verb|defs.txt|.
-    \item \textbf{Close the diagram under DD+AR.} Treat the generated
-          construction as a problem state and run the symbolic engine until
-          saturation. The result is a large collection of true consequences:
-          collinearities, equal angles, congruent segments, parallel lines,
-          perpendicular lines, and so on.
-    \item \textbf{Pick a derived fact as a theorem.} Any nontrivial derived
-          fact can become the goal of a synthetic problem. For instance, if
-          DD+AR derives \verb|perp C D C E|, we may ask a future solver to
-          prove exactly that statement.
-    \item \textbf{Trace the proof backwards.} Use the proof dependencies to
-          find which earlier facts and which constructed points were actually
-          needed. This is where \verb|trace_back.py| enters: it cuts away
-          irrelevant parts of the random diagram and keeps a smaller proof
-          core.
-    \item \textbf{Hide one auxiliary point.} Compare the points needed to
-          \emph{state} the theorem with the points needed in the proof. A
-          point used in the proof but absent from the statement is precisely
-          the kind of auxiliary point that human solvers often invent. Remove
-          that construction from the visible problem, and use it as the
-          target output for the language model.
+    \item Sample a large \emph{random} diagram - not a human-written
+          problem - using the same construction actions from
+          \verb|defs.txt|.
+    \item Run DD+AR to exhaustion on it, deriving every fact reachable from
+          the random premises.
+    \item For each derived fact, run \verb|trace_back.py| to find its
+          \emph{minimal} set of necessary points and premises.
+    \item Compare that minimal set to the points needed just to
+          \emph{state} the fact. Any extra point used only in the proof,
+          never in the statement, is an auxiliary point - the target a
+          rabbit-proposing model needs to learn to predict.
 \end{enumerate}
-
-In slogan form: random construction creates a large true diagram; DD+AR
-discovers many theorems inside it; traceback extracts a small proof; hiding
-one proof-only point turns the theorem into a rabbit-prediction training
-example. The paper reports doing this at very large scale: about one billion
-random diagrams, reduced by proof search and deduplication to roughly
-\(100\) million unique examples, of which about \(9\) million needed at least
-one auxiliary point.
-
-\begin{lecturebox}{What we will try to rebuild}
-For our own basic AlphaGeometry-style system, we do not need the full
-industrial-scale pipeline. We need a small version with the same logical
-shape: generate random construction sequences, run DD+AR, select derived
-goals, trace dependencies, detect proof-only points, and serialize examples
-of the form ``problem state \(\mapsto\) useful auxiliary construction.'' This
-will give us a local synthetic dataset we understand from end to end.
-\end{lecturebox}
+The paper reports doing this at large scale: about one billion random
+diagrams, exhaustively closed and deduplicated down to $100$ million unique
+(problem, proof) examples, of which about $9$ million needed at least one
+auxiliary point. The model is trained only to predict that one short
+construction, not to do any deduction itself - DD+AR still carries the
+entire burden of soundness.
 
 \textbf{What we can verify directly.} The checkpoint and its config are
 public, and we confirmed the following ourselves while writing these notes
@@ -4217,14 +4127,13 @@ just runs beam search over this tiny vocabulary and returns a handful of
 scored candidates - \Cref{sec: Running on Windows} showed this loop end to
 end.
 
-\textbf{What we will need to choose ourselves.} The public materials give
-enough information to understand the idea, but not every engineering choice
-needed to recreate the corpus. For our regeneration effort, we must choose:
-how to sample random constructions, how large each diagram should be, which
-derived facts count as interesting goals, how aggressively to deduplicate
-near-identical examples, and how to format the final input-output strings.
-Those choices are not a weakness of the project; they are exactly where a
-course version can stay small, transparent, and mathematically inspectable.
+\textbf{What is not available.} The $100$M synthetic examples themselves,
+the generator script, and the original training hyperparameters are all
+unpublished. Only the architecture (the numbers above), the trained weights,
+and the inference code are public - which is exactly why \Cref{sec: Source
+Code Overview}'s \verb|lm_inference_openrouter.py| exists: without the
+training data, fine-tuning a replacement model is hard, but prompting a
+general-purpose one is not.
 
 \subsection{A Closer Look at \texttt{graph.py}}\label{sec: graph.py}
 
