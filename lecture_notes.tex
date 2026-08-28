@@ -222,14 +222,24 @@
 \email{peter\_zenz@brown.edu}
 \date{\today}
 
+\hypersetup{
+    pdftitle={Euclidean Geometry and AI},
+    pdfauthor={Steven Creech and Peter Zenz},
+    pdfsubject={Lecture notes on Euclidean geometry and AlphaGeometry-style automated reasoning},
+    pdfkeywords={Euclidean geometry, automated reasoning, AlphaGeometry, neuro-symbolic AI},
+    pdfdisplaydoctitle=true,
+    hidelinks
+}
+
 \begin{document}
 \begin{abstract}
 These notes grew out of a Fall 2025 special-topics course at Brown University
 on Euclidean geometry and artificial intelligence.  They develop two subjects
 in parallel: classical geometric reasoning and the construction of a small,
-inspectable AlphaGeometry-style prover.  The accompanying repository contains
-the symbolic solver, a synthetic-data pipeline, a trainable language model,
-and tests for the cumulative programming project.  The aim is not to claim a
+inspectable AlphaGeometry-style prover.  The cumulative programming project
+develops a symbolic solver, a synthetic-data pipeline, a trainable language
+model, and tests.  Those software and data artifacts are maintained separately
+from this lecture-notes repository.  The aim is not to claim a
 full reproduction of DeepMind's system, but to make the central neuro-symbolic
 idea reproducible at undergraduate scale: a learned model proposes an
 auxiliary construction, and a symbolic engine must check it and produce a
@@ -4436,7 +4446,8 @@ Hartshorne's book rather than recreating notes from scratch.
 
 \section{Homework}
 The standalone files \texttt{Homework1.tex} through \texttt{Homework10.tex}
-contain the exact assigned wording. The roadmap below explains how the
+contain publication versions of the assignment handouts, with minor
+corrections and added source attributions. The roadmap below explains how the
 mathematical and implementation strands develop together; it is not a
 replacement for those handouts.
 
@@ -4528,9 +4539,11 @@ node types, invariants, and merge logic \\
 Both are engineering representations of the same mathematics. The richer
 graph is easier to understand after building the smaller points-only system,
 because every added object can be compared with something already familiar.
-In the remainder of Part~III, ``our prototype'' means the data-generation and
-language-model pipeline added around this reference solver, not a retroactive
-description of the Part~I course design.
+In the remainder of Part~III, references to ``the repository'' and ``our
+prototype'' mean the separate, AlphaGeometryRE-derived course-code project and
+the data-generation and language-model pipeline added around its reference
+solver. They do not refer to this lecture-notes repository or retroactively
+describe the Part~I course design.
 
 \begin{conceptcheck}{reference-architecture}
 How does each architecture represent the informal line $AB$? Give one benefit
@@ -5052,7 +5065,8 @@ perpendicularity is exactly our goal.
 \centering
 \includegraphics[width=0.55\textwidth]{figures/inbisector_exbisector.png}
 \caption{Triangle $ABC$ with incenter $D$ and excenter $E$ (opposite $A$),
-drawn by \texttt{numericals.py}. $CD$ is the internal bisector of
+generated for the course with the adapted AlphaGeometryRE
+\texttt{numericals.py} pipeline. $CD$ is the internal bisector of
 $\angle ACB$; $CE$ is the external bisector. The claim is $CD \perp CE$.}
 \label{fig: inbisector-exbisector}
 \end{figure}
@@ -6227,8 +6241,9 @@ parameters. The intended evaluation protocol is to leave the test partition
 and geometry benchmarks untouched until after this choice; retained run logs
 should be used to audit whether an experiment followed that protocol.
 
-\begin{lecturebox}{What is actually available in Git}
-The repository contains the complete 15,751-row auxiliary split, but only a
+\begin{lecturebox}{What is available in the separate course-code repository}
+The separate course-code repository contains the complete 15,751-row
+auxiliary split, but only a
 deterministic 2,000-row sample of the pretraining corpus.  The full prepared
 pretraining text (about 5.35 GB in total) and the optimizer-inclusive
 checkpoints (about 1.82 GB each) are intentionally external release artifacts,
@@ -6821,4 +6836,18 @@ $\mid$
 
 \bibliographystyle{alpha}
 \bibliography{Ref}
+
+\par\bigskip
+{\footnotesize
+\noindent\textbf{Copyright and license.}
+Copyright \textcopyright\ 2025--2026 Steven Creech and Peter Zenz. Except
+where otherwise noted, the authors' original course material in these notes is
+licensed under the
+\href{https://creativecommons.org/licenses/by/4.0/}{Creative Commons
+Attribution 4.0 International License (CC BY 4.0)}. The NSF logo, third-party
+code, externally authored problem material, and other third-party content are
+excluded from this license and remain subject to their respective terms and
+rights. See \texttt{LICENSE.md} and \texttt{THIRD\_PARTY\_NOTICES.md} in the
+lecture-notes repository for details.
+\par}
 \end{document}

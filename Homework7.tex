@@ -42,7 +42,16 @@ Assume (I1),(I2), and (I3) from the last class.
 \noindent\textbf{Note 2:} The below is a general outline of what construction should look like, be sure that you do all appropriate checks, and that you always create the correct relation objects and the corresponding updates in AR. 
 
 \begin{problem}
-We will start to build some artificial data to train the model starting next week. Thus, in order to get that you need your \verb|construction.py| file to have different constructions. There is a list of constructions in the extended table 1 in the alphageometry paper, but here are several of the constructions that you should have, but feel free to have more if you would like (The way you implement this is up to you, but there are general outlines below; although you may want to do things like make sure that the point you are constructing isn't already there):
+The construction menu below is adapted from Extended Data Table 1 of Trinh et
+al., ``Solving olympiad geometry without human demonstrations,'' \emph{Nature}
+625 (2024), doi:10.1038/s41586-023-06747-5.
+
+We will start to build some artificial data to train the model starting next
+week. To do that, your \verb|construction.py| file needs to support different
+constructions. Here are several constructions that you should have, but feel
+free to add more. The implementation is up to you; the general outlines below
+should be supplemented with appropriate checks, including checks that a point
+being constructed does not already exist.
 
 \begin{itemize}
     \item \verb|X = angle bisector(A,B,C)|, so you might create a function which takes in three points $A,B,C$, and it will construct a third point $X$ which bisects angle $A,B,C$. Now the point $X$ on the angle bisector might seem arbitrary, but it would be more useful if this point had some relation to the problem, so I recommend that the point $X$ is on the line $AC$ (that is there is a triangle $ABC$ and $X$ is the intesection of the angle bisector of $ABC$ and the $AC$). However this construction of picking $X$ as the intersection only works if $ABC$ are not collinear (which you can check using the diagram). 

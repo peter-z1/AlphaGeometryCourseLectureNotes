@@ -29,13 +29,20 @@ For the homework, you must write your own solutions for the Mathematical Problem
 \begin{problem}
     Recall the proposition that we were proving from class on Wednesday.
 
-    \textbf{Prop (Plane Separation):} Let $l$ be any line, Then the set of points not lying on $l$ can be divided into two non-empty subsets $S_1$ and $S_2$ with the following properties:
+    \emph{Source note.} Adapted from Hartshorne, \emph{Geometry: Euclid and
+    Beyond}, Proposition 7.1.
+
+    \textbf{Proposition (Plane Separation).} For any line $l$, the points not
+    lying on $l$ can be partitioned into two nonempty sets $S_1$ and $S_2$
+    satisfying:
     \begin{enumerate}[label=(\alph*)]
         \item Two points $A$, $B$ not on $l$ belong to the same set iff the segment $\overline{AB}$ does not intersect $l$.
         \item Two points $A$, $B$ not on $l$ belong to opposite sets iff the segment $\overline{AB}$ intersects $l$. 
     \end{enumerate}
 
-    We had define an relation $\sim$ by $A\sim B$ if $\overline{AB}\cap l=\emptyset$ and $A\not\sim B$ if $\overline{AB}\neq\emptyset$.
+    We defined a relation $\sim$ by $A\sim B$ if
+    $\overline{AB}\cap l=\emptyset$, and $A\not\sim B$ if
+    $\overline{AB}\cap l\neq\emptyset$.
 
     \begin{enumerate}
         \item Assume that $A,B,C$ are collinear in this case prove that if $A\sim B$ and $B\sim C$, then $A\sim C$. This will complete the proof that $\sim$ is an equivalence relation. 
@@ -50,11 +57,11 @@ For the homework, you must write your own solutions for the Mathematical Problem
 \section{Coding Goals}
 
 \begin{problem}
-        Consider the following problem from the \href{https://artofproblemsolving.com/wiki/index.php/2023_USAMO_Problems/Problem_1}{2023 USAMO} (note the solution is given in the link). Your system should be able to solve this problem with a rabbit. Use this as a test to manually add the rabbit using your construction file to see if it will solve this problem. 
+        Consider \href{https://artofproblemsolving.com/wiki/index.php/2023_USAMO_Problems/Problem_1}{2023 USAMO Problem 1} (the linked page also gives a solution). Your system should be able to solve this problem with a rabbit. Use this as a test to manually add the rabbit using your construction file to see if it will solve this problem.
 \end{problem}
 
 \begin{problem}
-    \href{https://artofproblemsolving.com/community/c6h3215547p29415873}{Here} is another problem that your system should be able to solve with the addition of a rabbit. 
+    This \href{https://artofproblemsolving.com/community/c6h3215547p29415873}{additional Art of Problem Solving problem} should also become solvable after adding a rabbit.
 \end{problem}
 
 \end{document}
